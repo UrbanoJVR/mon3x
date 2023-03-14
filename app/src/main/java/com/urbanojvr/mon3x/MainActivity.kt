@@ -5,20 +5,22 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.urbanojvr.mon3x.ui.theme.Mon3xTheme
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -36,6 +38,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NewExpense() {
+//    val context = LocalContext.current
+    var expenseDate by remember { mutableStateOf(LocalDate.now()) }
+    var expenseConcept by remember { mutableStateOf("") }
+    var expenseAmount by remember { mutableStateOf(BigDecimal.ZERO) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,9 +51,9 @@ fun NewExpense() {
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        DatePicker()
-        ConceptInput()
-        AmountInput()
+        ExpenseDatePicker(expenseDate, onDateChanged = { expenseDate = it })
+        ConceptInput(expenseConcept, onConceptChanged = {expenseConcept = it})
+        AmountInput(expenseAmount, onAmountChange = {expenseAmount = it})
         SaveButton()
     }
 }
@@ -69,34 +76,31 @@ private fun SaveButton() {
 }
 
 @Composable
-private fun AmountInput() {
+private fun AmountInput(amount: BigDecimal, onAmountChange: (BigDecimal) -> Unit) {
     OutlinedTextField(
-        value = "Hola",
-        onValueChange = { var text = it },
-        label = { Text(stringResource(R.string.amount)) }
+        value = amount.toPlainString(),
+        onValueChange = { onAmountChange(it.toBigDecimalOrNull() ?: BigDecimal.ZERO)},
+        label = { Text(stringResource(R.string.amount)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
 
 @Composable
-private fun ConceptInput() {
+private fun ConceptInput(concept: String, onConceptChanged: (String) -> Unit) {
     OutlinedTextField(
-        value = "Hola",
-        onValueChange = { var text = it },
+        value = concept,
+        onValueChange = onConceptChanged,
         label = { Text(stringResource(R.string.concept)) }
     )
 }
 
 @Composable
-private fun DatePicker() {
+private fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
     val context = LocalContext.current
-
-    var pickedDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
 
     val formattedDate by remember {
         derivedStateOf {
-            DateTimeFormatter.ofPattern("dd MMM yyyy").format(pickedDate)
+            DateTimeFormatter.ofPattern("dd MMM yyyy").format(initialDate)
         }
     }
 
@@ -114,6 +118,7 @@ private fun DatePicker() {
         Text(text = formattedDate)
         Spacer(modifier = Modifier.height(16.dp))
     }
+
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
@@ -128,10 +133,9 @@ private fun DatePicker() {
         }
     ) {
         datepicker(
-            initialDate = LocalDate.now(),
+            initialDate = initialDate,
             title = stringResource(R.string.pickADate),
-        ) {
-            pickedDate = it
-        }
+            onDateChange = onDateChanged
+        )
     }
 }
