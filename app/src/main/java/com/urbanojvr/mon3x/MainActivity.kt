@@ -1,5 +1,6 @@
 package com.urbanojvr.mon3x
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.urbanojvr.mon3x.ui.theme.Mon3xTheme
 import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.math.BigDecimal
@@ -95,34 +97,41 @@ private fun ConceptInput(concept: String, onConceptChanged: (String) -> Unit) {
 }
 
 @Composable
-private fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
-    val context = LocalContext.current
-
-    val formattedDate by remember {
-        derivedStateOf {
-            DateTimeFormatter.ofPattern("dd MMM yyyy").format(initialDate)
-        }
-    }
-
+fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
+    val formattedDate = remember { initialDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")) }
     val dateDialogState = rememberMaterialDialogState()
+
+    ExpenseDatePickerContent(formattedDate = formattedDate, dateDialogState = dateDialogState, onDateChanged = onDateChanged)
+}
+
+@Composable
+private fun ExpenseDatePickerContent(formattedDate: String, dateDialogState: MaterialDialogState, onDateChanged: (LocalDate) -> Unit) {
+    val context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Button(onClick = {
-            dateDialogState.show()
-        }) {
-            Text(text = stringResource(R.string.pickDate))
+        Button(onClick = { dateDialogState.show() }) {
+            Text(text = stringResource(id = R.string.pickDate))
         }
         Text(text = formattedDate)
         Spacer(modifier = Modifier.height(16.dp))
     }
 
+    ExpenseDateDialog(
+        dateDialogState = dateDialogState,
+        context = context,
+        onDateChanged = onDateChanged
+    )
+}
+
+@Composable
+private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, context: Context, onDateChanged: (LocalDate) -> Unit) {
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
-            positiveButton(text = "Ok") {
+            positiveButton(text = "OK") {
                 Toast.makeText(
                     context,
                     "Clicked Ok",
@@ -133,8 +142,8 @@ private fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate)
         }
     ) {
         datepicker(
-            initialDate = initialDate,
-            title = stringResource(R.string.pickADate),
+            initialDate = LocalDate.now(),
+            title = stringResource(id = R.string.pickADate),
             onDateChange = onDateChanged
         )
     }
