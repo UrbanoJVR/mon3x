@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">mon3x</string>
+    <string name="concept">Concept</string>
+    <string name="date">Date</string>
+    <string name="amount">Amount</string>
+    <string name="pickDate">Pick date</string>
+    <string name="pickADate">Pick a date</string>
+</resources>
