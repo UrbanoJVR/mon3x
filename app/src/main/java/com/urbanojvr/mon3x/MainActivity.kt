@@ -22,7 +22,6 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -43,7 +42,7 @@ fun NewExpense() {
 //    val context = LocalContext.current
     var expenseDate by remember { mutableStateOf(LocalDate.now()) }
     var expenseConcept by remember { mutableStateOf("") }
-    var expenseAmount by remember { mutableStateOf(BigDecimal.ZERO) }
+    var expenseAmount by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -55,7 +54,7 @@ fun NewExpense() {
     {
         ExpenseDatePicker(expenseDate, onDateChanged = { expenseDate = it })
         ConceptInput(expenseConcept, onConceptChanged = {expenseConcept = it})
-        AmountInput(expenseAmount, onAmountChange = {expenseAmount = it})
+        AmountInput(expenseAmount, onAmountChanged = {expenseAmount = it})
         SaveButton()
     }
 }
@@ -78,13 +77,28 @@ private fun SaveButton() {
 }
 
 @Composable
-private fun AmountInput(amount: BigDecimal, onAmountChange: (BigDecimal) -> Unit) {
+private fun AmountInput(amount: String, onAmountChanged: (String) -> Unit) {
+    var isValid by remember { mutableStateOf(true) }
+
     OutlinedTextField(
-        value = amount.toPlainString(),
-        onValueChange = { onAmountChange(it.toBigDecimalOrNull() ?: BigDecimal.ZERO)},
+        value = amount,
+        onValueChange = { newAmount ->
+            if (validAmount(newAmount)) {
+                onAmountChanged(newAmount)
+                isValid = true
+            } else {
+                isValid = false
+            }
+        },
         label = { Text(stringResource(R.string.amount)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
+}
+
+private fun validAmount(amount: String): Boolean {
+    val regex = Regex("^(\\d+(,\\d{0,2})?)?\$")
+
+    return regex.matches(amount)
 }
 
 @Composable
