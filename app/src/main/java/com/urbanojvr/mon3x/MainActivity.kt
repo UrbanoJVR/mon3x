@@ -113,12 +113,6 @@ private fun ConceptInput(concept: String, onConceptChanged: (String) -> Unit) {
 @Composable
 fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
     val dateDialogState = rememberMaterialDialogState()
-
-    ExpenseDatePickerContent(initialDate = initialDate, dateDialogState = dateDialogState, onDateChanged = onDateChanged)
-}
-
-@Composable
-private fun ExpenseDatePickerContent(initialDate: LocalDate, dateDialogState: MaterialDialogState, onDateChanged: (LocalDate) -> Unit) {
     val context = LocalContext.current
     var selectedDate by remember { mutableStateOf(initialDate) }
 
