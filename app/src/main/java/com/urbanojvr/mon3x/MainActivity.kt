@@ -112,15 +112,15 @@ private fun ConceptInput(concept: String, onConceptChanged: (String) -> Unit) {
 
 @Composable
 fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
-    val formattedDate = remember { initialDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")) }
     val dateDialogState = rememberMaterialDialogState()
 
-    ExpenseDatePickerContent(formattedDate = formattedDate, dateDialogState = dateDialogState, onDateChanged = onDateChanged)
+    ExpenseDatePickerContent(initialDate = initialDate, dateDialogState = dateDialogState, onDateChanged = onDateChanged)
 }
 
 @Composable
-private fun ExpenseDatePickerContent(formattedDate: String, dateDialogState: MaterialDialogState, onDateChanged: (LocalDate) -> Unit) {
+private fun ExpenseDatePickerContent(initialDate: LocalDate, dateDialogState: MaterialDialogState, onDateChanged: (LocalDate) -> Unit) {
     val context = LocalContext.current
+    var selectedDate by remember { mutableStateOf(initialDate) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -129,14 +129,17 @@ private fun ExpenseDatePickerContent(formattedDate: String, dateDialogState: Mat
         Button(onClick = { dateDialogState.show() }) {
             Text(text = stringResource(id = R.string.pickDate))
         }
-        Text(text = formattedDate)
+        Text(text = selectedDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
         Spacer(modifier = Modifier.height(16.dp))
     }
 
     ExpenseDateDialog(
         dateDialogState = dateDialogState,
         context = context,
-        onDateChanged = onDateChanged
+        onDateChanged = {
+            selectedDate = it
+            onDateChanged(it)
+        }
     )
 }
 
