@@ -45,6 +45,12 @@ fun NewExpense(expenseService: ExpenseService) {
     var expenseConcept by remember { mutableStateOf("") }
     var expenseAmount by remember { mutableStateOf("") }
 
+    fun resetValues() {
+        expenseDate = LocalDate.now()
+        expenseConcept = ""
+        expenseAmount = ""
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,7 +66,8 @@ fun NewExpense(expenseService: ExpenseService) {
             expenseService,
             expenseDate,
             expenseConcept,
-            expenseAmount
+            expenseAmount,
+            onSaved = {resetValues()}
         )
     }
 }
@@ -117,6 +124,7 @@ fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit
 
     ExpenseDateDialog(
         dateDialogState = dateDialogState,
+        selectedDate = selectedDate,
         onDateChanged = {
             selectedDate = it
             onDateChanged(it)
@@ -125,7 +133,7 @@ fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit
 }
 
 @Composable
-private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, onDateChanged: (LocalDate) -> Unit) {
+private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, selectedDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
@@ -134,7 +142,7 @@ private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, onDateChange
         }
     ) {
         datepicker(
-            initialDate = LocalDate.now(),
+            initialDate = selectedDate,
             title = stringResource(id = R.string.pickADate),
             onDateChange = onDateChanged
         )
@@ -142,7 +150,7 @@ private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, onDateChange
 }
 
 @Composable
-private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, expenseConcept: String, expenseAmount: String) {
+private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, expenseConcept: String, expenseAmount: String, onSaved: () -> Unit) {
     val context = LocalContext.current
     val okText = stringResource(R.string.savedUppercase)
 
@@ -156,6 +164,7 @@ private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, e
                     okText,
                     Toast.LENGTH_LONG
                 ).show()
+                onSaved()
             } catch (err: Exception) {
                 Toast.makeText(
                     context,
