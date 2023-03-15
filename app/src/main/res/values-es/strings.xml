@@ -5,4 +5,7 @@
     <string name="amount">Importe</string>
     <string name="pickDate">Seleccionar fecha</string>
     <string name="pickADate">Selecciona una fecha</string>
+    <string name="save">Guardar</string>
+    <string name="OK">OK</string>
+    <string name="savedUppercase">GUARDADO</string>
 </resources>

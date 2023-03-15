@@ -5,4 +5,7 @@
     <string name="amount">Amount</string>
     <string name="pickDate">Pick date</string>
     <string name="pickADate">Pick a date</string>
+    <string name="save">Save</string>
+    <string name="OK">OK</string>
+    <string name="savedUppercase">SAVED</string>
 </resources>

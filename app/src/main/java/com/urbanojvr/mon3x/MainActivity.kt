@@ -1,6 +1,5 @@
 package com.urbanojvr.mon3x
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -67,23 +66,6 @@ fun NewExpense(expenseService: ExpenseService) {
 }
 
 @Composable
-private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, expenseConcept: String, expenseAmount: String) {
-    Button(
-        onClick = { expenseService.saveExpense(Expense(amount = expenseAmount, concept = expenseConcept, date = expenseDate))  },
-        // Uses ButtonDefaults.ContentPadding by default
-        contentPadding = PaddingValues(
-            start = 20.dp,
-            top = 12.dp,
-            end = 20.dp,
-            bottom = 12.dp
-        ),
-        modifier = Modifier.padding(5.dp)
-    ) {
-        Text("Like")
-    }
-}
-
-@Composable
 private fun AmountInput(amount: String, onAmountChanged: (String) -> Unit) {
     var isValid by remember { mutableStateOf(true) }
 
@@ -120,7 +102,6 @@ private fun ConceptInput(concept: String, onConceptChanged: (String) -> Unit) {
 @Composable
 fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit) {
     val dateDialogState = rememberMaterialDialogState()
-    val context = LocalContext.current
     var selectedDate by remember { mutableStateOf(initialDate) }
 
     Column(
@@ -136,7 +117,6 @@ fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit
 
     ExpenseDateDialog(
         dateDialogState = dateDialogState,
-        context = context,
         onDateChanged = {
             selectedDate = it
             onDateChanged(it)
@@ -145,17 +125,11 @@ fun ExpenseDatePicker(initialDate: LocalDate, onDateChanged: (LocalDate) -> Unit
 }
 
 @Composable
-private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, context: Context, onDateChanged: (LocalDate) -> Unit) {
+private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, onDateChanged: (LocalDate) -> Unit) {
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
-            positiveButton(text = "OK") {
-                Toast.makeText(
-                    context,
-                    "Clicked Ok",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            positiveButton(text = stringResource(R.string.OK))
             negativeButton(text = "Cancel")
         }
     ) {
@@ -164,5 +138,31 @@ private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, context: Con
             title = stringResource(id = R.string.pickADate),
             onDateChange = onDateChanged
         )
+    }
+}
+
+@Composable
+private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, expenseConcept: String, expenseAmount: String) {
+    val context = LocalContext.current
+    val okText = stringResource(R.string.savedUppercase)
+
+    Button(
+        onClick = {
+            expenseService.saveExpense(Expense(expenseAmount, expenseConcept, expenseDate))
+            Toast.makeText(
+                context,
+                okText,
+                Toast.LENGTH_LONG
+            ).show()
+        },
+        contentPadding = PaddingValues(
+            start = 20.dp,
+            top = 12.dp,
+            end = 20.dp,
+            bottom = 12.dp
+        ),
+        modifier = Modifier.padding(5.dp)
+    ) {
+        Text(stringResource(R.string.save))
     }
 }
