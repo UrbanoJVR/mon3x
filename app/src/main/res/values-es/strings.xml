@@ -8,4 +8,6 @@
     <string name="save">Guardar</string>
     <string name="OK">OK</string>
     <string name="savedUppercase">GUARDADO</string>
+    <string name="errorUppercase">ERROR</string>
+    <string name="cancel">Cancelar</string>
 </resources>

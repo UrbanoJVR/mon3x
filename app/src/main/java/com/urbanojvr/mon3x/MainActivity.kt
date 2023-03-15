@@ -6,9 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -137,7 +137,7 @@ private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, selectedDate
         dialogState = dateDialogState,
         buttons = {
             positiveButton(text = stringResource(R.string.OK))
-            negativeButton(text = "Cancel")
+            negativeButton(text = stringResource(R.string.cancel))
         }
     ) {
         datepicker(
@@ -152,7 +152,7 @@ private fun ExpenseDateDialog(dateDialogState: MaterialDialogState, selectedDate
 private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, expenseConcept: String, expenseAmount: String, onSaved: () -> Unit) {
     val context = LocalContext.current
     val okText = stringResource(R.string.savedUppercase)
-
+    val errText = stringResource(R.string.errorUppercase)
 
     Button(
         onClick = {
@@ -167,7 +167,7 @@ private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, e
             } catch (err: Exception) {
                 Toast.makeText(
                     context,
-                    "ERROR",
+                    errText,
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -180,6 +180,12 @@ private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, e
         ),
         modifier = Modifier.padding(5.dp)
     ) {
+        Icon(
+            Icons.Filled.Done,
+            contentDescription = stringResource(R.string.save),
+            modifier = Modifier.size(ButtonDefaults.IconSize)
+        )
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(stringResource(R.string.save))
     }
 }
