@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.urbanojvr.mon3x.model.Expense
+import com.urbanojvr.mon3x.service.ExpenseService
 import com.urbanojvr.mon3x.ui.theme.Mon3xTheme
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
@@ -30,7 +32,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Mon3xTheme {
-                NewExpense()
+                val expenseService = ExpenseService()
+                NewExpense(expenseService)
             }
         }
     }
@@ -38,8 +41,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun NewExpense() {
-//    val context = LocalContext.current
+fun NewExpense(expenseService: ExpenseService) {
     var expenseDate by remember { mutableStateOf(LocalDate.now()) }
     var expenseConcept by remember { mutableStateOf("") }
     var expenseAmount by remember { mutableStateOf("") }
@@ -55,14 +57,19 @@ fun NewExpense() {
         ExpenseDatePicker(expenseDate, onDateChanged = { expenseDate = it })
         ConceptInput(expenseConcept, onConceptChanged = {expenseConcept = it})
         AmountInput(expenseAmount, onAmountChanged = {expenseAmount = it})
-        SaveButton()
+        SaveButton(
+            expenseService,
+            expenseDate,
+            expenseConcept,
+            expenseAmount
+        )
     }
 }
 
 @Composable
-private fun SaveButton() {
+private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, expenseConcept: String, expenseAmount: String) {
     Button(
-        onClick = { /* ... */ },
+        onClick = { expenseService.saveExpense(Expense(amount = expenseAmount, concept = expenseConcept, date = expenseDate))  },
         // Uses ButtonDefaults.ContentPadding by default
         contentPadding = PaddingValues(
             start = 20.dp,
