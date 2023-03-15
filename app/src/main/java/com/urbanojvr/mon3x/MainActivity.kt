@@ -146,14 +146,23 @@ private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, e
     val context = LocalContext.current
     val okText = stringResource(R.string.savedUppercase)
 
+
     Button(
         onClick = {
-            expenseService.saveExpense(Expense(expenseAmount, expenseConcept, expenseDate))
-            Toast.makeText(
-                context,
-                okText,
-                Toast.LENGTH_LONG
-            ).show()
+            try {
+                expenseService.saveExpense(Expense(expenseAmount, expenseConcept, expenseDate))
+                Toast.makeText(
+                    context,
+                    okText,
+                    Toast.LENGTH_LONG
+                ).show()
+            } catch (err: Exception) {
+                Toast.makeText(
+                    context,
+                    "ERROR",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         },
         contentPadding = PaddingValues(
             start = 20.dp,
