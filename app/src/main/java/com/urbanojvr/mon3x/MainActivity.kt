@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.urbanojvr.mon3x.model.Expense
 import com.urbanojvr.mon3x.service.ExpenseService
@@ -188,4 +189,11 @@ private fun SaveButton(expenseService: ExpenseService, expenseDate: LocalDate, e
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(stringResource(R.string.save))
     }
+}
+
+@Preview()
+@Composable
+fun DefaultPreview() {
+    val expenseService = ExpenseService()
+    NewExpense(expenseService)
 }
